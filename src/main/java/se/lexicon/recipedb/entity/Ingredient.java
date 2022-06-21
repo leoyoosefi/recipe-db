@@ -9,8 +9,7 @@ public class Ingredient {
     private int id;
 @Column(nullable = false, unique = true)
 private String ingredientName;
-
-    public Ingredient() {
+public Ingredient() {
     }
 
     public Ingredient(int id, String ingredientName) {

@@ -5,9 +5,8 @@ import java.util.Objects;
 @Entity
 public class RecipeInstruction {
 @Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
-@Column(nullable = false, length = 1500)
+
     private String instructions;
 
     public RecipeInstruction() {
