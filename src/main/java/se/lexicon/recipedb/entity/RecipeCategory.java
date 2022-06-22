@@ -1,9 +1,7 @@
 package se.lexicon.recipedb.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 @Entity
@@ -11,7 +9,9 @@ public class RecipeCategory {
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+@Column(nullable = false)
     private String category;
+@ManyToMany(cascade = {CascadeType.DETACH, CascadeType.REFRESH}, mappedBy = "categories")
     Set<Recipe> recipe;
 
     public RecipeCategory() {
@@ -52,6 +52,32 @@ public class RecipeCategory {
         this.recipe = recipe;
     }
 
+    public void addRecipe(Recipe recipe)
+    {
+        if(recipe == null) throw new IllegalArgumentException("recipe data is null");
+        HashSet<Object> recipes = null;
+        if(recipes == null) recipes = new HashSet<>();
+        if(recipe.getCategories() == null) recipe.setCategories(new HashSet<>());
+
+        if(!recipes.contains(recipe))
+        {
+            recipes.add(recipe);
+        }
+    }
+
+    public void removeRecipe(Recipe recipe)
+    {
+        if(category == null) throw new IllegalArgumentException("recipe data is null");
+        HashSet<Object> recipes = null;
+        if(recipes == null) recipes = new HashSet<>();
+        if(recipe.getCategories() == null) recipe.setCategories(new HashSet<>());
+
+        if(!recipes.contains(recipe))
+        {
+            recipes.add(recipe);
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -69,6 +95,7 @@ public class RecipeCategory {
     public String toString() {
         return "RecipeCategory{" +
                 "id=" + id +
+                ", category='" + category + '\'' +
                 '}';
     }
 }

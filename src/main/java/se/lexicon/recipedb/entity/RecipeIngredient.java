@@ -10,19 +10,17 @@ import java.util.Objects;
 public class RecipeIngredient {
 @Id
 @GeneratedValue(generator = "UUID")
-@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator", parameters = {
-        @Parameter(
-                name = "uuid_gen_strategy_class",
-                value = "org.hibernate.id.uuid.CustomVersionOneStrategy"
-        )
-})
+@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
 @Column(updatable = false, nullable = false)
     private String id;
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,CascadeType.REFRESH})
     private Ingredient ingredient;
+    @Column(nullable = false)
     private double amount;
+    @Column(nullable = false)
     private Measurement measurement;
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,CascadeType.REFRESH})
+    @JoinColumn(name = "recipe_id")
     private Recipe recipe;
 
     public RecipeIngredient() {
@@ -99,8 +97,11 @@ public class RecipeIngredient {
     @Override
     public String toString() {
         return "RecipeIngredient{" +
-                "ingredient=" + ingredient +
+                "id='" + id + '\'' +
+                ", ingredient=" + ingredient +
                 ", amount=" + amount +
+                ", measurement=" + measurement +
+                ", recipe=" + recipe +
                 '}';
     }
 }

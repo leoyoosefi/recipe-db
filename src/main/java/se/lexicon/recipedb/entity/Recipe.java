@@ -1,18 +1,29 @@
 package se.lexicon.recipedb.entity;
 
 import javax.persistence.*;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+
 @Entity
 public class Recipe {
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+@Column(nullable = false)
     private String recipeName;
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
+            mappedBy = "recipe",
+            orphanRemoval = true
+    )
     List<RecipeIngredient> recipeIngredients;
     @OneToOne
+    @JoinColumn(name = "instruction_id")
     private RecipeInstruction instruction;
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "recipe_category"
+            ,joinColumns = {@JoinColumn(name = "recipe_id", referencedColumnName = "id")}
+            ,inverseJoinColumns = {@JoinColumn(name = "recipe_category_id", referencedColumnName = "id")})
     Set<RecipeCategory> categories;
 
     public Recipe(String recipeName, List<RecipeIngredient> recipeIngredients, RecipeInstruction instruction) {
@@ -73,6 +84,57 @@ public class Recipe {
         this.categories = categories;
     }
 
+
+    public void addRecipeIngredient(RecipeIngredient recipeIngredient)
+    {
+        if(recipeIngredient == null) throw new IllegalArgumentException("recipeIngredient data is null");
+        if(recipeIngredients == null) recipeIngredients = new ArrayList<>();
+        if(recipeIngredient.getRecipe() == null) recipeIngredient.setRecipe(new Recipe());
+
+        if(!recipeIngredients.contains(recipeIngredient) && recipeIngredient.getRecipe() != this)
+        {
+            recipeIngredients.add(recipeIngredient);
+            recipeIngredient.setRecipe(this);
+        }
+    }
+
+    public void removeRecipeIngredient(RecipeIngredient recipeIngredient)
+    {
+        if(recipeIngredient == null) throw new IllegalArgumentException("recipeIngredient data is null");
+        if(recipeIngredients == null) recipeIngredients = new ArrayList<>();
+        if(recipeIngredient.getRecipe() == null) recipeIngredient.setRecipe(new Recipe());
+
+        if(recipeIngredients.contains(recipeIngredient) && recipeIngredient.getRecipe() == this)
+        {
+            recipeIngredient.setRecipe(null);
+            recipeIngredients.add(recipeIngredient);
+        }
+    }
+
+    public void addCategory(RecipeCategory category)
+    {
+        if(category == null) throw new IllegalArgumentException("category data is null");
+        if(categories == null) categories = new HashSet<>();
+        if(category.getRecipe() == null) category.setRecipe(new HashSet<>());
+
+        if(!categories.contains(category))
+        {
+            categories.add(category);
+        }
+    }
+
+    public void removeCategory(RecipeCategory category)
+    {
+        if(category == null) throw new IllegalArgumentException("category data is null");
+        if(categories == null) categories = new HashSet<>();
+        if(category.getRecipe() == null) category.setRecipe(new HashSet<>());
+
+        if(!categories.contains(category))
+        {
+            categories.add(category);
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -85,4 +147,6 @@ public class Recipe {
     public int hashCode() {
         return Objects.hash(id, recipeName, recipeIngredients, instruction, categories);
     }
+
+
 }

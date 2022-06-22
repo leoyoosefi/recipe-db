@@ -2,7 +2,11 @@ package se.lexicon.recipedb.entity;
 
 public enum Measurement {
 
-    mg, g, KG, ml, dl, L
+    TBSP, TBS, MG, G, KG, ML, DL, L
+
+
+
+
 
 }
 

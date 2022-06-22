@@ -1,12 +1,17 @@
 package se.lexicon.recipedb.entity;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 import java.util.Objects;
 @Entity
 public class RecipeInstruction {
 @Id
+@GeneratedValue(generator = "UUID")
+@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+@Column(updatable = false, nullable = false)
     private String id;
-
+@Column(nullable = false, length = 1500)
     private String instructions;
 
     public RecipeInstruction() {
